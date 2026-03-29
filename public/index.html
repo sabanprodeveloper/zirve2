@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kazanan Seçici</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🎉 Kazanan Seçici</h1>
+            
+            <div class="section">
+                <h2>Katılımcılar</h2>
+                <div id="names-list" class="names-list">
+                    <p class="loading">Yükleniyor...</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <button id="select-btn" class="btn btn-primary">
+                    <span class="btn-text">Kazananı Seç</span>
+                    <span class="btn-emoji">🎲</span>
+                </button>
+            </div>
+
+            <div id="winner-section" class="winner-section hidden">
+                <h2>🏆 Kazanan:</h2>
+                <div class="winner-box">
+                    <p id="winner-name" class="winner-name">-</p>
+                </div>
+                <button id="reset-btn" class="btn btn-secondary">
+                    Tekrar Seç
+                </button>
+            </div>
+
+            <div id="error-message" class="error hidden"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
