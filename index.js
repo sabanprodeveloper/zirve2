@@ -17,30 +17,45 @@ const RANGE = `${SHEET_NAME}!${COLUMN_RANGE}`; // Dinamik olarak oluşturulan ar
 let authConfig;
 const credentialsPath = path.join(__dirname, "credentials.json");
 
-if (process.env.GOOGLE_CREDENTIALS) {
-  // Railway: Environment variable'dan oku (base64 encoded olabilir)
-  try {
-    const credString = Buffer.from(process.env.GOOGLE_CREDENTIALS, 'base64').toString('utf8');
+try {
+  if (process.env.GOOGLE_CREDENTIALS) {
+    // Railway: Environment variable'dan oku
+    let credString = process.env.GOOGLE_CREDENTIALS;
+    
+    // Eğer base64 ise decode et
+    if (!credString.includes('{')) {
+      try {
+        credString = Buffer.from(credString, 'base64').toString('utf8');
+      } catch (e) {
+        // Base64 değilse direkt JSON olarak kullan
+      }
+    }
+    
     authConfig = JSON.parse(credString);
     console.log("✓ Credentials environment variable'dan yüklendi");
-  } catch (e) {
-    // Base64 decode başarısızsa direkt JSON string olarak dene
-    authConfig = JSON.parse(process.env.GOOGLE_CREDENTIALS);
-    console.log("✓ Credentials JSON string'den yüklendi");
+  } else if (fs.existsSync(credentialsPath)) {
+    // Local: credentials.json dosyasından oku
+    authConfig = require(credentialsPath);
+    console.log("✓ Credentials dosyasından yüklendi");
+  } else {
+    throw new Error("GOOGLE_CREDENTIALS env var veya credentials.json bulunamadı");
   }
-} else if (fs.existsSync(credentialsPath)) {
-  // Local: credentials.json dosyasından oku
-  authConfig = require(credentialsPath);
-  console.log("✓ Credentials dosyasından yüklendi");
-} else {
-  console.error("❌ Credentials bulunamadı! GOOGLE_CREDENTIALS env var veya credentials.json gerekli");
-  process.exit(1);
+} catch (err) {
+  console.error("❌ Credentials yüklemesi başarısız:", err.message);
+  authConfig = null;
 }
 
-const auth = new google.auth.GoogleAuth({
-  credentials: authConfig,
-  scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
-});
+// Google Auth initialize et
+let auth;
+if (authConfig) {
+  auth = new google.auth.GoogleAuth({
+    credentials: authConfig,
+    scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
+  });
+} else {
+  console.warn("⚠️  Google Sheets API bağlantısı devre dışı");
+  auth = null;
+}
 
 // Spreadsheet'teki tüm sheet adlarını kontrol et
 async function checkSheetNames() {
@@ -133,14 +148,18 @@ app.get("/winner", async (req, res) => {
   }
 });
 
-// Sunucu başlatıldığında sheet adlarını kontrol et ve veri çekmeyi test et
-checkSheetNames().then(sheets => {
-  console.log("✓ Sheet adları başarıyla kontrol edildi");
-  return getFormData();
-}).then(data => {
-  console.log("Başlangıç verisi:", data);
-}).catch(err => {
-  console.error("Başlangıçta hata oluştu:", err.message);
+// Server'ı başlat
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✓ Server çalışıyor: http://localhost:${PORT}`);
+  console.log(`✓ Veriler: http://localhost:${PORT}/names`);
+  console.log(`✓ Kazanan: http://localhost:${PORT}/winner`);
+  
+  // Startup'ta credentials'ı test et (opsiyonel)
+  checkSheetNames().then(sheets => {
+    console.log("✓ Google Sheets bağlantısı başarılı");
+  }).catch(err => {
+    console.warn("⚠️  Google Sheets bağlantısında sorun:", err.message);
+    console.warn("   Endpoint'ler erişilemeyecektir");
+  });
 });
-
-app.listen(process.env.PORT || 3000, () => console.log(`Server çalışıyor: http://localhost:${process.env.PORT || 3000}`));
