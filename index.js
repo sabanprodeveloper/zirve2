@@ -21,27 +21,32 @@ try {
   if (process.env.GOOGLE_CREDENTIALS) {
     // Railway: Environment variable'dan oku
     let credString = process.env.GOOGLE_CREDENTIALS;
+    console.log("📌 GOOGLE_CREDENTIALS bulundu, uzunluk:", credString.length);
     
     // Eğer base64 ise decode et
     if (!credString.includes('{')) {
+      console.log("🔄 Base64 decode ediliyor...");
       try {
         credString = Buffer.from(credString, 'base64').toString('utf8');
+        console.log("✓ Base64 decode başarılı");
       } catch (e) {
-        // Base64 değilse direkt JSON olarak kullan
+        console.error("❌ Base64 decode başarısız:", e.message);
+        throw e;
       }
     }
     
     authConfig = JSON.parse(credString);
-    console.log("✓ Credentials environment variable'dan yüklendi");
+    console.log("✓ Credentials environment variable'dan yüklendi (type:", authConfig.type, ")");
   } else if (fs.existsSync(credentialsPath)) {
     // Local: credentials.json dosyasından oku
     authConfig = require(credentialsPath);
-    console.log("✓ Credentials dosyasından yüklendi");
+    console.log("✓ Credentials dosyasından yüklendi (type:", authConfig.type, ")");
   } else {
     throw new Error("GOOGLE_CREDENTIALS env var veya credentials.json bulunamadı");
   }
 } catch (err) {
   console.error("❌ Credentials yüklemesi başarısız:", err.message);
+  console.error("Detay:", err.stack);
   authConfig = null;
 }
 

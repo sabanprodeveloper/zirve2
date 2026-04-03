@@ -98,9 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const data = await response.json();
                 
-                // 2 saniye bekleme (dramatik efekt)
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
+                // Kazanan animasyonu
+                await animateWinnerSelection(data.winner);
                 showWinner(data.winner);
                 hideError();
             } catch (err) {
@@ -111,6 +110,76 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Kazanan animasyonu
+    async function animateWinnerSelection(winnerName) {
+    const nameTags = document.querySelectorAll('.name-tag');
+    const winnerIndex = names.indexOf(winnerName);
+
+    if (winnerIndex === -1 || nameTags.length === 0) return;
+
+    let currentIndex = 0;
+    let prevIndex = null;
+
+    let speed = 50;          // hızlı başla
+    let maxSpeed = 300;      // en yavaş hız
+    let slowing = false;
+
+    let totalSteps = nameTags.length + Math.floor(Math.random() * nameTags.length);
+    // en az 1 tur + biraz ekstra
+
+    return new Promise(resolve => {
+
+        function step() {
+            // Önceki seçimi kaldır (OPTIMIZED)
+            if (prevIndex !== null) {
+                nameTags[prevIndex].classList.remove('selected');
+            }
+
+            // Yeni seçimi ekle
+            nameTags[currentIndex].classList.add('selected');
+            nameTags[currentIndex].scrollIntoView({ block: 'nearest' });
+
+            prevIndex = currentIndex;
+
+            // Sonraki index
+            currentIndex = (currentIndex + 1) % nameTags.length;
+
+            totalSteps--;
+
+            // Yavaşlama başlat
+            if (totalSteps < nameTags.length) {
+                slowing = true;
+            }
+
+            if (slowing) {
+                speed += 10; // yavaşlat
+                if (speed > maxSpeed) speed = maxSpeed;
+            }
+
+            // DURMA KOŞULU (KRİTİK)
+            if (totalSteps <= 0 && currentIndex === winnerIndex) {
+                // Final highlight
+                setTimeout(() => {
+                    if (prevIndex !== null) {
+                        nameTags[prevIndex].classList.remove('selected');
+                    }
+
+                    nameTags[winnerIndex].classList.add('selected', 'winner-final');
+                    nameTags[winnerIndex].scrollIntoView({ block: 'center' });
+
+                    resolve();
+                }, speed);
+
+                return;
+            }
+
+            setTimeout(step, speed);
+        }
+
+        step();
+    });
+}
+
         // Kazananı göster
         function showWinner(winner) {
             winnerName.textContent = winner;
@@ -118,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
             winnerSection.classList.remove('hidden');
             
             // Kazanan sesini çal (isteğe bağlı)
-            playWinnerSound();
+            
             
             // Confetti saçma efekti
             createConfetti();
@@ -144,36 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Kazanan sesi (isteğe bağlı)
-        function playWinnerSound() {
-            // Modern Web Audio API ile ses efekti
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Kısa müzik parçası çal
-                const notes = [880, 1320, 880, 1760];
-                const now = audioContext.currentTime;
-                
-                notes.forEach((freq, index) => {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
-                    
-                    osc.connect(gain);
-                    gain.connect(audioContext.destination);
-                    
-                    osc.frequency.value = freq;
-                    osc.type = 'sine';
-                    
-                    gain.gain.setValueAtTime(0.3, now + index * 0.2);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + index * 0.2 + 0.15);
-                    
-                    osc.start(now + index * 0.2);
-                    osc.stop(now + index * 0.2 + 0.15);
-                });
-            } catch (e) {
-                // Browsers eski versiyonunda ses çalmaz, sorun değil
-            }
-        }
+        
 
         // Tekrar seç
         resetBtn.addEventListener('click', () => {
