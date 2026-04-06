@@ -243,6 +243,17 @@ h2 {
     color: rgba(255, 255, 255, 0.8);
 }
 
+.draw-logo {
+    display: block;
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin: 0 auto 8px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px;
+}
+
 .draw-btn.active,
 .draw-btn:hover {
     background: rgba(255, 255, 255, 0.2);
@@ -302,6 +313,19 @@ h2 {
     border-radius: 20px;
     padding: 16px;
     animation: slideIn 0.6s ease-out;
+    text-align: center;
+}
+
+.result-logo {
+    display: block;
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin: 0 auto 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .result-block h3 {
@@ -753,32 +777,79 @@ h2 {
     box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
 }
 
-/* Sponsorlar Bölümü */
+/* ================= Sponsorlar Bölümü ================= */
 .sponsors-card {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
+    z-index: 999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     background: rgba(255, 255, 255, 0.12);
     box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.12);
     backdrop-filter: blur(12px);
     padding: 8px 10px;
     border-top: 1px solid rgba(255, 255, 255, 0.16);
-    z-index: 999;
 }
 
+/* Başlığı gizle */
 .sponsors-card h2 {
     display: none;
 }
 
+/* Ortadaki sponsor container */
 .sponsors-container {
     display: flex;
-    justify-content: center;   /* ORTALAMA */
+    justify-content: center;
     align-items: center;
-    gap: 10px;
-    overflow-x: auto;
+    padding: 0 100px;  /* Sol-sağ logolar için boşluk */
+    gap: 8px;
+    overflow-x: auto; /* Yatay kaydırma */
+    position: relative;
+    z-index: 1;
 }
 
+/* Sol ve sağ logolar */
+.own-logo {
+    position: absolute;
+    height: 88px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2; /* Ortadakilerin üstünde */
+
+    /* Sponsor kartı görünümü */
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+
+    display: block;
+    object-fit: contain;
+    width: auto;
+    max-width: 120px;
+}
+
+.own-logo:hover {
+    transform: translateY(-50%) translateY(-3px);
+    box-shadow: 0 10px 22px rgba(102, 126, 234, 0.16);
+    border-color: rgba(102, 126, 234, 0.18);
+}
+
+.own-logo.left {
+    left: 0;
+}
+
+.own-logo.right {
+    right: 0;
+}
+
+/* Sponsor kartları */
 .sponsor-item {
     flex: 0 0 80px;
     max-width: 80px;
@@ -800,9 +871,10 @@ h2 {
     border-color: rgba(102, 126, 234, 0.18);
 }
 
+/* Sponsor logoları */
 .sponsor-logo {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     transition: transform 0.3s ease;
     display: block;
@@ -813,6 +885,7 @@ h2 {
     transform: scale(1.05);
 }
 
+/* ================= Responsive ================= */
 @media (max-width: 768px) {
     .sponsor-item {
         flex: 0 0 120px;
@@ -822,43 +895,19 @@ h2 {
 }
 
 @media (max-width: 480px) {
-    .card {
-        padding: 20px;
-    }
-
-    h1 {
-        font-size: 2em;
-    }
-
-    h2 {
-        font-size: 1.1em;
-    }
-
-    .names-list {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    }
-
-    .winner-name {
-        font-size: 2em;
-    }
-
-    .sponsors-card {
-        margin: 30px -20px 0;
-        padding: 20px 15px;
-    }
-
-    .sponsors-card h2 {
-        font-size: 1.2em;
-    }
-
-    .sponsors-container {
-        gap: 12px;
-    }
-
     .sponsor-item {
         flex: 1 1 100px;
         max-width: 120px;
         height: 80px;
+    }
+
+    .sponsors-container {
+        gap: 6px;
+        padding: 0 40px; /* mobilde logolar için boşluk */
+    }
+
+    .own-logo {
+        height: 32px;
     }
 }
 

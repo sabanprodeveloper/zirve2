@@ -4,10 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const backBtn = document.getElementById('back-btn');
     const state = loadState();
     const drawOptions = {
-        jamal: { label: 'Jamal Coffee', prize: '15 kişi tatlı + kahve', count: 15 },
-        miracle: { label: 'Miracle', prize: '16 kişi parfüm', count: 16 },
-        plantso: { label: 'Plantso', prize: '10 kişi workshop', count: 10 },
-        gamezone: { label: 'Gamezone', prize: '5 kişi ücretsiz oyun', count: 5 }
+        jamal: { label: 'Jamal Coffee', prize: '15 kişi tatlı + kahve', count: 15, logo: 'sponsorlar/jamal.jpg' },
+        miracle: { label: 'Miracle', prize: '16 kişi parfüm', count: 16, logo: 'sponsorlar/bilinmeyen.jpg' },
+        plantso: { label: 'Plantso', prize: '10 kişi workshop', count: 10, logo: 'sponsorlar/plantso.jfif' },
+        gamezone: { label: 'Gamezone', prize: '5 kişi ücretsiz oyun', count: 5, logo: 'sponsorlar/gamezone.png' }
     };
 
     const selectedDraw = getQueryParam('draw');
@@ -37,6 +37,12 @@ function renderDrawResult(key, state, drawOptions, wrapper) {
 
     const block = document.createElement('div');
     block.className = 'result-block';
+
+    const logoImg = document.createElement('img');
+    logoImg.src = draw.logo;
+    logoImg.alt = draw.label;
+    logoImg.className = 'result-logo';
+    block.appendChild(logoImg);
 
     const title = document.createElement('h3');
     title.textContent = `${draw.label} — ${draw.count} kişi | ${draw.prize}`;
