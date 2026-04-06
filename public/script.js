@@ -8,6 +8,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const tokenInput = document.getElementById('token-input');
     const loginError = document.getElementById('login-error');
 
+    const storedLogin = localStorage.getItem('egzLoggedIn') === 'true';
+
+    function showMainPage() {
+        loginError.classList.add('hidden');
+        loginContainer.classList.add('hidden');
+        mainContainer.classList.remove('hidden');
+        document.querySelector('.sponsors-card')?.classList.remove('hidden');
+        initializeApp();
+    }
+
+    if (storedLogin) {
+        showMainPage();
+    }
+
     // Login işlemi
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -16,13 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (enteredToken === CORRECT_TOKEN) {
             // Başarılı giriş
-            loginError.classList.add('hidden');
-            loginContainer.classList.add('hidden');
-            mainContainer.classList.remove('hidden');
+            localStorage.setItem('egzLoggedIn', 'true');
+            showMainPage();
             tokenInput.value = '';
-            
-            // Ana sayfayı başlat
-            initializeApp();
         } else {
             // Başarısız giriş
             loginError.textContent = 'Geçersiz token! Tekrar deneyin.';
@@ -34,55 +44,142 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Ana uygulama
     function initializeApp() {
-        const namesList = document.getElementById('names-list');
         const selectBtn = document.getElementById('select-btn');
         const winnerSection = document.getElementById('winner-section');
-        const winnerName = document.getElementById('winner-name');
+        const winnerList = document.getElementById('winner-list');
         const resetBtn = document.getElementById('reset-btn');
         const errorMessage = document.getElementById('error-message');
+        const drawInfo = document.getElementById('draw-info');
+        const drawButtons = document.querySelectorAll('.draw-btn');
 
+        const STORAGE_KEY = 'egzDrawState';
         let names = [];
+        let selectedDrawKey = 'jamal';
+        let state = loadState();
+
+        const drawOptions = {
+            jamal: { label: 'Jamal Coffee', prize: '15 kişi tatlı + kahve', count: 15 },
+            miracle: { label: 'Miracle', prize: '16 kişi parfüm', count: 16 },
+            plantso: { label: 'Plantso', prize: '10 kişi workshop', count: 10 },
+            gamezone: { label: 'Gamezone', prize: '5 kişi ücretsiz oyun', count: 5 }
+        };
+
+        function loadState() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+                return {
+                    winnersByDraw: saved.winnersByDraw || {
+                        jamal: [],
+                        miracle: [],
+                        plantso: [],
+                        gamezone: []
+                    },
+                    allWinners: saved.allWinners || [],
+                    savedNames: saved.savedNames || []
+                };
+            } catch (err) {
+                return {
+                    winnersByDraw: { jamal: [], miracle: [], plantso: [], gamezone: [] },
+                    allWinners: [],
+                    savedNames: []
+                };
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function getRemainingNames() {
+            return names.filter(name => !state.allWinners.includes(name));
+        }
+
+        function isDrawCompleted(key) {
+            return state.winnersByDraw[key] && state.winnersByDraw[key].length > 0;
+        }
+
+        function updateDrawSelection(key) {
+            selectedDrawKey = key;
+            drawButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.draw === key);
+            });
+
+            const draw = drawOptions[key];
+            drawInfo.textContent = `Seçilen çekiliş: ${draw.label} — ${draw.count} kişi (${draw.prize})`;
+            if (isDrawCompleted(key)) {
+                selectBtn.disabled = true;
+                selectBtn.querySelector('.btn-text').textContent = `${draw.label} çekilişi tamamlandı`;
+            } else {
+                selectBtn.disabled = false;
+                selectBtn.querySelector('.btn-text').textContent = `${draw.label} için Kazananları Seç`;
+            }
+        }
+
+        drawButtons.forEach(button => {
+            button.addEventListener('click', () => updateDrawSelection(button.dataset.draw));
+        });
+
+        updateDrawSelection(selectedDrawKey);
 
         // Katılımcıları yükle
         async function loadNames() {
             try {
-                namesList.innerHTML = '<p class="loading">Yükleniyor...</p>';
                 const response = await fetch('/names');
-                
                 if (!response.ok) {
                     throw new Error('Veriler yüklenemedi');
                 }
 
                 names = await response.json();
-                displayNames();
+                state.savedNames = names;
+                saveState();
                 hideError();
             } catch (err) {
-                showError('Katılımcılar yüklenemedi: ' + err.message);
-                namesList.innerHTML = '<p class="loading">Hata oluştu!</p>';
+                if (state.savedNames.length) {
+                    names = state.savedNames;
+                    hideError();
+                } else {
+                    showError('Katılımcılar yüklenemedi: ' + err.message);
+                }
             }
         }
 
-        // Katılımcıları göster
-        function displayNames() {
-            namesList.innerHTML = '';
-            
-            if (names.length === 0) {
-                namesList.innerHTML = '<p class="loading">Katılımcı bulunamadı</p>';
-                return;
+        function chooseWinners() {
+            const draw = drawOptions[selectedDrawKey];
+            const remaining = getRemainingNames();
+            if (remaining.length < draw.count) {
+                showError(`Yeterli katılımcı yok. Kalan ${remaining.length} katılımcı var.`);
+                return [];
             }
 
-            names.forEach(name => {
-                const tag = document.createElement('div');
-                tag.className = 'name-tag';
-                tag.textContent = name;
-                namesList.appendChild(tag);
-            });
+            if (isDrawCompleted(selectedDrawKey)) {
+                showError(`${draw.label} çekilişi zaten tamamlandı.`);
+                return [];
+            }
+
+            const copy = [...remaining];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy.slice(0, draw.count);
+        }
+
+        function saveDrawResults(draw, winners) {
+            state.winnersByDraw[selectedDrawKey] = winners;
+            state.allWinners = [...state.allWinners, ...winners];
+            saveState();
         }
 
         // Kazananı seç
         selectBtn.addEventListener('click', async () => {
             if (names.length === 0) {
-                showError('Katılımcı bulunamadı!');
+                showError('Katılımcı listesi henüz hazır değil. Lütfen sayfayı yenileyin.');
+                return;
+            }
+
+            const draw = drawOptions[selectedDrawKey];
+            const winners = chooseWinners();
+            if (!winners.length) {
                 return;
             }
 
@@ -90,107 +187,26 @@ document.addEventListener('DOMContentLoaded', () => {
             selectBtn.innerHTML = '<span class="btn-text">Seçiliyor...</span><span class="btn-emoji spinning">🎲</span>';
 
             try {
-                const response = await fetch('/winner');
-                
-                if (!response.ok) {
-                    throw new Error('Kazanan seçilemedi');
-                }
-
-                const data = await response.json();
-                
-                // Kazanan animasyonu
-                await animateWinnerSelection(data.winner);
-                showWinner(data.winner);
+                await animateWinnerSelection();
+                saveDrawResults(draw, winners);
                 hideError();
+                updateDrawSelection(selectedDrawKey);
+                window.location.href = `results.html?draw=${encodeURIComponent(selectedDrawKey)}`;
+                return;
             } catch (err) {
                 showError('Hata: ' + err.message);
             } finally {
-                selectBtn.disabled = false;
-                selectBtn.innerHTML = '<span class="btn-text">Kazananı Seç</span><span class="btn-emoji">🎲</span>';
+                selectBtn.disabled = isDrawCompleted(selectedDrawKey);
+                selectBtn.innerHTML = `<span class="btn-text">${draw.label} için Kazananları Seç</span><span class="btn-emoji">🎲</span>`;
             }
         });
 
-        // Kazanan animasyonu
-    async function animateWinnerSelection(winnerName) {
-    const nameTags = document.querySelectorAll('.name-tag');
-    const winnerIndex = names.indexOf(winnerName);
-
-    if (winnerIndex === -1 || nameTags.length === 0) return;
-
-    let currentIndex = 0;
-    let prevIndex = null;
-
-    let speed = 50;          // hızlı başla
-    let maxSpeed = 300;      // en yavaş hız
-    let slowing = false;
-
-    let totalSteps = nameTags.length + Math.floor(Math.random() * nameTags.length);
-    // en az 1 tur + biraz ekstra
-
-    return new Promise(resolve => {
-
-        function step() {
-            // Önceki seçimi kaldır (OPTIMIZED)
-            if (prevIndex !== null) {
-                nameTags[prevIndex].classList.remove('selected');
-            }
-
-            // Yeni seçimi ekle
-            nameTags[currentIndex].classList.add('selected');
-            nameTags[currentIndex].scrollIntoView({ block: 'nearest' });
-
-            prevIndex = currentIndex;
-
-            // Sonraki index
-            currentIndex = (currentIndex + 1) % nameTags.length;
-
-            totalSteps--;
-
-            // Yavaşlama başlat
-            if (totalSteps < nameTags.length) {
-                slowing = true;
-            }
-
-            if (slowing) {
-                speed += 10; // yavaşlat
-                if (speed > maxSpeed) speed = maxSpeed;
-            }
-
-            // DURMA KOŞULU (KRİTİK)
-            if (totalSteps <= 0 && currentIndex === winnerIndex) {
-                // Final highlight
-                setTimeout(() => {
-                    if (prevIndex !== null) {
-                        nameTags[prevIndex].classList.remove('selected');
-                    }
-
-                    nameTags[winnerIndex].classList.add('selected', 'winner-final');
-                    nameTags[winnerIndex].scrollIntoView({ block: 'center' });
-
-                    resolve();
-                }, speed);
-
-                return;
-            }
-
-            setTimeout(step, speed);
-        }
-
-        step();
-    });
-}
-
-        // Kazananı göster
-        function showWinner(winner) {
-            winnerName.textContent = winner;
-            document.querySelector('.section').style.display = 'none';
-            winnerSection.classList.remove('hidden');
-            
-            // Kazanan sesini çal (isteğe bağlı)
-            
-            
-            // Confetti saçma efekti
-            createConfetti();
+        // Kazanan animasyonu (basitleştirilmiş)
+        async function animateWinnerSelection() {
+            return new Promise(resolve => {
+                createConfetti();
+                setTimeout(resolve, 1500);
+            });
         }
 
         // Confetti efekti
@@ -213,12 +229,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        
-
         // Tekrar seç
         resetBtn.addEventListener('click', () => {
             winnerSection.classList.add('hidden');
-            document.querySelector('.section').style.display = 'block';
+            winnerList.innerHTML = '';
         });
 
         // Hata mesajı göster
@@ -232,7 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
             errorMessage.classList.add('hidden');
         }
 
-        // Katılımcıları yüklemeyi başlat
         loadNames();
     }
 });
