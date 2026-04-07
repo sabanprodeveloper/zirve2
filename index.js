@@ -25,6 +25,11 @@ if (fs.existsSync(firebaseCredentialsPath)) {
   console.warn("⚠️  Firebase credentials dosyası bulunamadı");
 }
 
+// Root path'i check-email.html'ye yönlendir (İlk açılan sayfa) - STATIC'TEN ÖNCE!
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/check-email.html'));
+});
+
 // Static dosyaları serve et
 app.use(express.static('public'));
 

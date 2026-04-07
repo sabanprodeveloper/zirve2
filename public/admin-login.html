@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kazanan Seçici</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Dağ Background -->
+    <img id="dag-background" src="dag.png" alt="Dağ">
+
+    <!-- Login Sayfası -->
+    <div id="login-container" class="login-container">
+        <div class="login-card">
+            <div class="login-logos">
+                <img src="logo.jpg" alt="Logo" class="login-logo">
+            </div>
+            <h1 class="login-title">EGZ-26 ÇEKİLİŞ</h1>
+            <p class="login-subtitle">Sisteme girmek için token giriniz. token:  EGZ-26</p>
+            <form id="login-form" class="login-form">
+                <input 
+                    type="password" 
+                    id="token-input" 
+                    class="login-input" 
+                    placeholder="Token gir..." 
+                    autocomplete="off"
+                >
+                <button type="submit" class="btn btn-primary login-btn">
+                    Giriş Yap
+                </button>
+            </form>
+            <p id="login-error" class="login-error hidden"></p>
+        </div>
+    </div>
+
+    <!-- Ana Sayfa -->
+    <div id="main-container" class="container hidden">
+        <div class="card">
+            <h1>🎉 EGZ-26 ÇEKİLİŞİ</h1>
+            
+            <div class="section">
+                <h2>Çekiliş Türü</h2>
+                <div class="draw-tabs">
+                    <button class="draw-btn active" data-draw="jamal">
+                        <img src="sponsorlar/jamal.jpg" alt="Jamal" class="draw-logo">
+                        Jamal Coffee<br><span>15 kişi tatlı + kahve</span>
+                    </button>
+                    <button class="draw-btn" data-draw="miracle">
+                        <img src="sponsorlar/bilinmeyen.jpg" alt="Miracle" class="draw-logo">
+                        Miracle<br><span>16 kişi parfüm</span>
+                    </button>
+                    <button class="draw-btn" data-draw="plantso">
+                        <img src="sponsorlar/plantso.jfif" alt="Plantso" class="draw-logo">
+                        Plantso<br><span>5 Kişi Ücretsiz Workshop + 5 Kişi %30 İndirim</span>
+                    </button>
+                    <button class="draw-btn" data-draw="gamezone">
+                        <img src="sponsorlar/gamezone.png" alt="Gamezone" class="draw-logo">
+                        Gamezone<br><span>5 kişi ücretsiz oyun</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="section draw-summary">
+                <p id="draw-info">Seçilen çekiliş: Jamal Coffee — 15 kişi</p>
+            </div>
+
+            <div class="section">
+                <button id="select-btn" class="btn btn-primary">
+                    <span class="btn-text">Kazananı Seç</span>
+                    <span class="btn-emoji">🎲</span>
+                </button>
+            </div>
+
+            <div class="section">
+                <a href="results.html" class="btn btn-secondary results-link">Tüm Çekiliş Sonuçları</a>
+            </div>
+
+            <div id="winner-section" class="winner-section hidden">
+                <h2>🏆 Kazananlar:</h2>
+                <div class="winner-box">
+                    <ul id="winner-list" class="winner-list"></ul>
+                </div>
+                <button id="reset-btn" class="btn btn-secondary">
+                    Yeni Çekiliş
+                </button>
+            </div>
+
+            <div id="error-message" class="error hidden"></div>
+        </div>
+
+        <!-- Sponsorlar Bölümü -->
+    </div>
+
+    <div class="sponsors-card hidden">
+        <img src="logo.jpg" alt="Sponsorlar" class="own-logo left">
+        <h2>🤝 Sponsorlarımız</h2>
+        <div class="sponsors-container">
+            <div class="sponsor-item">
+                <img src="sponsorlar/images.jfif" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/erzurum.png" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/gamezone.png" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/bilinmeyen.jpg" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/jamal.jpg" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/kılıcoglu.png" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/palaryum.png" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/plantso.jfif" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/telvedar.jpg" alt="Sponsor" class="sponsor-logo">
+            </div>
+        </div>
+        <img src="logo.jpg" alt="Sponsorlar" class="own-logo right">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
