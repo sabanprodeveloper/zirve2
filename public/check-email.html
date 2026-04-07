@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Kontrol - EGZ-26</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .email-container {
+            max-width: 500px;
+            margin: 50px auto;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .email-card {
+            background: rgba(255, 255, 255, 0.14);
+            border-radius: 30px;
+            box-shadow: 0 32px 90px rgba(0, 0, 0, 0.33);
+            padding: 36px 34px 38px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            animation: slideIn 0.5s ease-out;
+            width: 100%;
+        }
+
+        .email-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .email-card h1 {
+            color: #000000;
+            margin-bottom: 10px;
+            font-size: 28px;
+            margin-top: 0;
+            line-height: 1.2;
+        }
+
+        .email-card .subtitle {
+            color: #000000;
+            margin-bottom: 30px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .email-form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .email-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .email-form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .email-form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .email-btn-check {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .email-btn-check:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .email-btn-check:active {
+            transform: translateY(0);
+        }
+
+        .email-result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+            font-weight: 500;
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+
+        .email-result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+            display: block;
+        }
+
+        .email-result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+            display: block;
+        }
+
+        .email-result.loading {
+            background: #e2e3e5;
+            color: #383d41;
+            border: 2px solid #d6d8db;
+            display: block;
+            text-align: center;
+        }
+
+        .email-emoji {
+            font-size: 30px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .success-emoji {
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .home-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .home-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .home-link a:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Admin Button (Görünür) */
+        .admin-button-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        .admin-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            transition: all 0.3s;
+            opacity: 0.8;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .admin-button:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .email-container {
+                margin: 30px auto;
+                padding: 0 15px;
+            }
+
+            .email-card {
+                padding: 25px 20px;
+                border-radius: 20px;
+            }
+
+            .email-card h1 {
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+
+            .email-card .subtitle {
+                font-size: 13px;
+                margin-bottom: 25px;
+            }
+
+            .email-logo {
+                width: 70px;
+                height: 70px;
+                font-size: 35px;
+                margin-bottom: 15px;
+            }
+
+            .email-form-group {
+                margin-bottom: 15px;
+            }
+
+            .email-form-group label {
+                font-size: 13px;
+                margin-bottom: 6px;
+            }
+
+            .email-form-group input {
+                padding: 10px 12px;
+                font-size: 16px;
+            }
+
+            .email-btn-check {
+                padding: 11px;
+                font-size: 15px;
+                margin-top: 8px;
+            }
+
+            .email-result {
+                margin-top: 20px;
+                padding: 15px;
+                font-size: 14px;
+            }
+
+            .email-emoji {
+                font-size: 25px;
+                margin-bottom: 8px;
+            }
+
+            .home-link {
+                margin-top: 15px;
+            }
+
+            .home-link a {
+                font-size: 13px;
+                padding: 7px 12px;
+            }
+
+            .admin-button {
+                padding: 10px 18px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .email-container {
+                margin: 20px auto;
+                padding: 0 10px;
+            }
+
+            .email-card {
+                padding: 20px 15px;
+                border-radius: 15px;
+            }
+
+            .email-card h1 {
+                font-size: 20px;
+                margin-bottom: 6px;
+            }
+
+            .email-card .subtitle {
+                font-size: 12px;
+                margin-bottom: 20px;
+            }
+
+            .email-logo {
+                width: 60px;
+                height: 60px;
+                font-size: 32px;
+                margin-bottom: 12px;
+            }
+
+            .email-form-group {
+                margin-bottom: 12px;
+            }
+
+            .email-form-group label {
+                font-size: 12px;
+                margin-bottom: 5px;
+            }
+
+            .email-form-group input {
+                padding: 9px 10px;
+                font-size: 16px;
+                border-radius: 6px;
+            }
+
+            .email-btn-check {
+                padding: 10px;
+                font-size: 14px;
+                margin-top: 6px;
+                border-radius: 6px;
+            }
+
+            .email-result {
+                margin-top: 15px;
+                padding: 12px;
+                font-size: 13px;
+                border-radius: 6px;
+            }
+
+            .email-emoji {
+                font-size: 22px;
+                margin-bottom: 6px;
+            }
+
+            .home-link {
+                margin-top: 12px;
+            }
+
+            .home-link a {
+                font-size: 12px;
+                padding: 6px 10px;
+                border-radius: 5px;
+            }
+
+            .admin-button {
+                padding: 8px 14px;
+                font-size: 11px;
+                top: 15px;
+                left: 15px;
+            }
+        }
+
+        .email-result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .email-result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+            display: block;
+        }
+
+        .email-result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+            display: block;
+        }
+
+        .email-result.loading {
+            background: #e2e3e5;
+            color: #383d41;
+            border: 2px solid #d6d8db;
+            display: block;
+            text-align: center;
+        }
+
+        .email-emoji {
+            font-size: 30px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .success-emoji {
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .home-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .home-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .home-link a:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dağ Background -->
+    <img id="dag-background" src="dag.png" alt="Dağ">
+
+    <!-- Email Kontrol Sayfası -->
+    <div class="email-container">
+        <div class="email-card card">
+            <div class="email-logo">✉️</div>
+            <h1>EGZ-26 Giriş Kontrolü</h1>
+            <p class="subtitle">Email adresinizi giriş yapıp görevliye bildirin.</p>
+
+            <form id="email-form">
+                <div class="email-form-group">
+                    <label for="email">Email Adresi</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="example@domain.com" 
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+                <button type="submit" class="email-btn-check btn btn-primary">Kontrol Et</button>
+            </form>
+
+            <div id="result" class="email-result"></div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Butonu (Gizli) -->
+    <div class="admin-button-container">
+        <a href="/" class="admin-button" title="Admin Girişi">Admin Girişi</a>
+    </div>
+
+    <!-- Sponsorlar Bölümü -->
+    <div class="sponsors-card">
+        <img src="logo.jpg" alt="Sponsorlar" class="own-logo left">
+        <h2>🤝 Sponsorlarımız</h2>
+        <div class="sponsors-container">
+            <div class="sponsor-item">
+                <img src="sponsorlar/images.jfif" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/erzurum.png" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/gamezone.png" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/bilinmeyen.jpg" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/jamal.jpg" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/kılıcoglu.png" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/palaryum.png" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/plantso.jfif" alt="Sponsor" class="sponsor-logo">
+            </div>
+            <div class="sponsor-item">
+                <img src="sponsorlar/telvedar.jpg" alt="Sponsor" class="sponsor-logo">
+            </div>
+        </div>
+        <img src="logo.jpg" alt="Sponsorlar" class="own-logo right">
+    </div>
+
+    <script>
+        const emailForm = document.getElementById('email-form');
+        const emailInput = document.getElementById('email');
+        const resultDiv = document.getElementById('result');
+        const CHECKED_EMAILS_KEY = 'egz_checked_emails';
+
+        // Kontrol edilen emailleri localStorage'dan yükle
+        function getCheckedEmails() {
+            try {
+                const stored = localStorage.getItem(CHECKED_EMAILS_KEY);
+                return stored ? JSON.parse(stored) : [];
+            } catch (err) {
+                return [];
+            }
+        }
+
+        // Kontrol edilen emaili localStorage'a ekle
+        function addCheckedEmail(email) {
+            try {
+                const checked = getCheckedEmails();
+                if (!checked.includes(email)) {
+                    checked.push(email);
+                    localStorage.setItem(CHECKED_EMAILS_KEY, JSON.stringify(checked));
+                }
+            } catch (err) {
+                console.error('localStorage hatası:', err);
+            }
+        }
+
+        // Email daha önce kontrol edildi mi kontrol et
+        function isEmailAlreadyChecked(email) {
+            return getCheckedEmails().includes(email);
+        }
+
+        emailForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = emailInput.value.trim().toLowerCase();
+
+            if (!email) {
+                showError('Lütfen email adresinizi giriniz');
+                return;
+            }
+
+            // Daha önce kontrol edildi mi kontrol et
+            if (isEmailAlreadyChecked(email)) {
+                showWarning(`⚠️ Bu email adresi daha önce kontrol edilmiştir.<br><br>Sorununuz varsa lütfen görevlilerle iletişime geçiniz.`);
+                return;
+            }
+
+            // Loading göster
+            showLoading('Kontrol ediliyor...');
+
+            try {
+                const response = await fetch('/check-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const text = await response.text();
+                console.log('Response:', text);
+
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (parseErr) {
+                    console.error('JSON parse hatası:', parseErr);
+                    console.error('Response status:', response.status);
+                    console.error('Response text:', text);
+                    showError('Server hatası oluştu. Lütfen daha sonra tekrar deneyin.');
+                    return;
+                }
+
+                // Firebase'de daha önce kullanılmış mı kontrol et
+                if (data.alreadyUsed) {
+                    showAlreadyUsed(`<span class="email-emoji">⚠️</span>Bu email adresi daha önce kontrolü yapılmıştır.<br><br>Sorununuz varsa lütfen görevlilerle iletişime geçiniz.`);
+                } else if (data.found) {
+                    // Başarılı kontrolde emaili kaydet
+                    addCheckedEmail(email);
+                    showSuccess(`<span class="email-emoji success-emoji">✓</span>🎉 Hoşgeldiniz! <br> ${data.name} <br> <br> ${data.message}`);
+                } else {
+                    showError(`<span class="email-emoji">✗</span>❌ Bu email adresi etkinliğe kayıtlı değil. <br><br> Lütfen organizatörlerle iletişime geçiniz.`);
+                }
+
+            } catch (err) {
+                console.error('Hata:', err);
+                showError('Hata: ' + err.message);
+            }
+        });
+
+        function showSuccess(message) {
+            resultDiv.className = 'email-result success';
+            resultDiv.innerHTML = message;
+        }
+
+        function showError(message) {
+            resultDiv.className = 'email-result error';
+            resultDiv.innerHTML = message;
+        }
+
+        function showWarning(message) {
+            resultDiv.className = 'email-result error';
+            resultDiv.innerHTML = message;
+        }
+
+        function showAlreadyUsed(message) {
+            resultDiv.className = 'email-result error';
+            resultDiv.innerHTML = message;
+        }
+
+        function showLoading(message) {
+            resultDiv.className = 'email-result loading';
+            resultDiv.innerHTML = `<span class="email-emoji">⏳</span>${message}`;
+        }
+    </script>
+</body>
+</html>

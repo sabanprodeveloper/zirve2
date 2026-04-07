@@ -1,0 +1,75 @@
+═══════════════════════════════════════════════════════════════════════════════
+                   RAILWAY ENVIRONMENT VARIABLES SETUP
+═══════════════════════════════════════════════════════════════════════════════
+
+Firebase ve Google Sheets credentials için Railway'a eklenecek environment variables:
+
+1. GOOGLE_CREDENTIALS (Google Sheets API)
+   ─────────────────────────────────────────
+   Dosya: credentials.json (Web üzerinden indir ve base64 encode et)
+   
+   NASIL ENCODE EDECEKSIN:
+   - credentials.json dosyasını notepad'te aç
+   - https://www.base64encode.org sitesine git
+   - İçeriği yapıştır ve encode et
+   - Sonucu kopyala ve aşağıdaki variable'a ekle
+
+   Variable Name: GOOGLE_CREDENTIALS
+   Variable Value: [base64-encoded-credentials.json]
+
+
+2. FIREBASE_CREDENTIALS (Firebase Admin SDK) - HAZIR
+   ──────────────────────────────────────────────────
+   Variable Name: FIREBASE_CREDENTIALS
+   Variable Value: 
+   
+ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAiZWd6LTI2IiwKICAicHJpdmF0ZV9rZXlfaWQiOiAiYmI1NmY2NjI1ODZjNzY5MmI4NDMyMjg1OTIzMjc3NjI1MmE3YmM4OCIsCiAgInByaXZhdGVfa2V5IjogIi0tLS0tQkVHSU4gUFJJVkFURSBLRVktLS0tLVxuTUlJRXZnSUJBREFOQmdrcWhraUc5dzBCQVFFRkFBU0NCS2d3Z2dTa0FnRUFBb0lCQVFDdkVKZkJwL2U1SzJUb1xueVovSzZHNXBZUkZsVmhMUndOL09LclJlNHUzQUpqS0pQM3ZJRWtONkwrWG1UVXcvZmR2VkpVZUoxZW5kNlRHc1xuWVJmRDFVY05KK001c2FocUFicHJBS29ocnZ6R3phVnJlMUdlaVBsUk5iTFd2bzlWVTFPa3lKVk5IK2locUxCRlxubVJUNlVNKzBPMGxTTW1wQXVrVSttbFNSc0dCRVBneVczczNWTzIrZDF6YUhIVDZHZHZBSTdOUGdrZnZpZ1cyS1xuZzdveXY5UmEvRjl2UWk3SVdmZDl2Z3NhWHlUekxhdUNKbUtmU2JwSnpnVnhXSFpnV0ZiZU5mZnUyYzlqR2dhMFxuNEZBOGdya0VHMDRzU2dYRERmVlZOYlhwVVg1ZkhxUHZ0OFJNM2pHZFpPU1ZLNlJVYk9Pam0vVXFIN0N5S1NEVFxuUVB0QTRyaFJBZ01CQUFFQ2dnRUFEcmt4WE9HclpYWS9WemxoM1l4ZEs0Z0tPNnR1QzIyOUdrSDFoOXpEdHlYZlxuUTk0WmVIMnZaczdjSWRtU3dKZVlEZ2laSFlBUldtUmE2azhEZmRPKy85M0F4V0RxTTZRdjVxdVllTVhCVDYwTFxuQW1ENFA5ZWE5RmdLVWFKQmtYWmZ4MXViL0VVTjZTUUpVelBUNlFEZWxIUy9XV1k3dThtT3VsR21MQ3laSkJRRVxuN0FERUpId2hVaGtzL09sbDRubmpZb29sL05DQ3FaeWdJdkJVQ1BLTmFSQzdZSUhLaGs0cUlaM2pXODFMMzNSVFxuWXVaWE83bHVHNVNNNmZiSGZoZXNpYnVBYzhzZ0pXR1dWanBUbDVPVHZUM0JBVXBpWXlMVlM4enNhYSt3ZFppcVxuaGhvZTBxeVh6UWZUa1RmeHExdWZHdFdCcHBCMDl4ZVFUM3lqbzJ4Nk93S0JnUURaZ25KOEYyTGJ6QVhiRWxmOVxuM2tKRytjMGxhMnMwMzdDSnQ3UVk1bkJqMkVBcFJmY0I1eHpRLzJRNnJnbEdGK2xtcTZPVjJJT0ZvaUd6MEM4alxuaWFtWktWTVlJQks4dFJIUDcrRmlKWTEwaXgweGJUaWZKaE0rcUM5M0gxQUphN2d5bFNOTmtxZnNicldKa0RJUVxucUoyOTNkU3ArLzVUUTlQTFFBUjZmdTJpWndLQmdRRE9DMU9ZaFVreGthZEtBUWlYc2E3elBtRnFobWYwL24rblxuSmF2b0xUZjl1UXZ3SURhbkZNN09kVjdXMHVjMnRFNGRjUkE0YURPL1hUSzNjYmNKNU9VWmRzMWNoQWNWNEdJNVxuRmJ2WkMrOVV2S3Y4TTVMdjErS2dnZVd6UlBVdVEwM0tST0lYM1R4ZkNmNnVFZGI4NVJvSThvdjd3MGNEODQrY1xueWcxWTRaak1od0tCZ1FES29Zb0NMTTgrTUoycjd6VG1IcTdqN0VlL2Vva1BZdXpWLzd2YURxUFpnRmFWbk1aMlxua1ZYNUpsTzdqdks0eUFINlVpQTlzczBrSzF6MlpSWGxKNVJHU1lkTnpHTm9SYzlvUmZOVU9lUEVGTzJIWkZjQlxuZkxrbEFBM29EZFhFVVFQeXE1bU41UGhuZk9QR1dmMHFJOHVBWEM2SWhXZnpMaGNiSEhLUG83dkNOUUtCZ1FDOFxuS1ZuUkdqOHFWbEpJWWNOQURKS3hMaEYyWDRIR0dUZm9JNTNtckl6S1Z0ZlJGUW56OFN1ZkhVNWJya1JhRDdTYVxuYkdzY3FPNEozd2wyMktNRUZSVW0rUGczZVphaTRzT3dUK201SDQ0VGV5MHdac1RUNVBuZ0RHQUJJNE1vR1d5TFxudi9ZZFJ2dGY2MWU2RFM2Z3luUEpJZjYyRHJIbXFPRklsTGcxcCtlTE53S0JnQmkrR0Jpd3ZnM0x4MVVpcWw1eVxuRGYzT3Z4QW9ZNXZWa3VOb0cyWkF1L3JiaGt6VVd3T2UvU2NjMkt0RE9OM2t3Uld4SHhLbmthVFhkQUFlM0RzS1xudWV0MCsxbFhpV0M2ZXFTZmpDOXlHc0F6eUd3MXBRWk5uMGViMldLNUFLNDR0b3Q0UEN5SlVTVEJWL240eGlNTlxuY2lCOWpuK1VLKzJZRk1GcktERktJY2h0XG4tLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tXG4iLAogICJjbGllbnRfZW1haWwiOiAiZmlyZWJhc2UtYWRtaW5zZGstZmJzdmNAZWd6LTI2LmlhbS5nc2VydmljZWFjY291bnQuY29tIiwKICAiY2xpZW50X2lkIjogIjExNjg2NTE0NzE4MzgzMTg3MDA1MiIsCiAgImF1dGhfdXJpIjogImh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbS9vL29hdXRoMi9hdXRoIiwKICAidG9rZW5fdXJpIjogImh0dHBzOi8vb2F1dGgyLmdvb2dsZWFwaXMuY29tL3Rva2VuIiwKICAiYXV0aF9wcm92aWRlcl94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL29hdXRoMi92MS9jZXJ0cyIsCiAgImNsaWVudF94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL3JvYm90L3YxL21ldGFkYXRhL3g1MDkvZmlyZWJhc2UtYWRtaW5zZGstZmJzdmMlNDBlZ3otMjYuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLAogICJ1bml2ZXJzZV9kb21haW4iOiAiZ29vZ2xlYXBpcy5jb20iCn0K
+
+
+3. GOOGLE_SHEETS_ID (opsiyonel - hardcoded zaten)
+   ────────────────────────────────────────────────
+   Variable Name: GOOGLE_SHEETS_ID
+   Variable Value: 1pK9xgfZ9GHJVZvjxLv-85PeWcceWlA_ajD6hupNS5tI
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                            RAILWAY ADIMLAR:
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Railway Dashboard'a git → https://railway.app
+2. Projen seç (Zirve)
+3. Variables sekmesine tıkla
+4. "Add Variable" butonuna tıkla
+5. Şu variables'leri ekle:
+
+   a) FIREBASE_CREDENTIALS (ZATENBASEç-ENCODED - KOPYALA/YAPIŞDIR)
+   b) GOOGLE_CREDENTIALS (kendi credentials.json'ını base64 encode et ve ekle)
+
+6. Değişiklikler otomatik deploy edilecek
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                         FIREBASE COLLECTION YAPISI:
+═══════════════════════════════════════════════════════════════════════════════
+
+1. email_checks
+   - email: string
+   - name: string
+   - found: boolean
+   - timestamp: string (ISO)
+   - date: Timestamp
+
+2. cekilis_sonuclari
+   - cekilisAdi: string ("Plantso", "Miracle", vb)
+   - cekilisKodu: string ("plantso", "miracle", vb)
+   - kategori: string (Plantso için: "Bedava" veya "%30 İndirim")
+   - kazananlar: array of objects {name, gender, prizeType}
+   - toplam: number
+   - tarih: string (ISO)
+   - odul: string (ödül açıklaması)
+   - date: Timestamp
+
+PLANTSO İÇİN ÖZEL: Bedava ve İndirim kazananları ayrı ayrı dokümanda kaydedilir!
+Example doc IDs: plantso_bedava_2026-04-08, plantso_indirim_2026-04-08
+
+═══════════════════════════════════════════════════════════════════════════════

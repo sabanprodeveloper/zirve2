@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kazanan Seçici</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        // İlk açılışta check-email.html'ye yönlendir
+        if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+            window.location.href = '/check-email.html';
+        }
+    </script>
 </head>
 <body>
     <!-- Dağ Background -->
@@ -52,7 +58,7 @@
                     </button>
                     <button class="draw-btn" data-draw="plantso">
                         <img src="sponsorlar/plantso.jfif" alt="Plantso" class="draw-logo">
-                        Plantso<br><span>10 kişi workshop</span>
+                        Plantso<br><span>5 Kişi Ücretsiz Workshop + 5 Kişi %30 İndirim</span>
                     </button>
                     <button class="draw-btn" data-draw="gamezone">
                         <img src="sponsorlar/gamezone.png" alt="Gamezone" class="draw-logo">

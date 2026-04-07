@@ -166,8 +166,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function saveDrawResults(draw, winners) {
             state.winnersByDraw[selectedDrawKey] = winners;
-            state.allWinners = [...state.allWinners, ...winners];
+            // allWinners'a sadece isimleri ekle (state tutarlılığı için)
+            const winnerNames = winners.map(w => typeof w === 'string' ? w : w.name);
+            state.allWinners = [...state.allWinners, ...winnerNames];
             saveState();
+            
+            // Firebase'e de kaydet
+            const drawOption = drawOptions[selectedDrawKey];
+            if (drawOption) {
+                fetch('/save-cekilis-result', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cekilisKodu: selectedDrawKey,
+                        cekilisAdi: drawOption.label,
+                        odul: drawOption.prize,
+                        kazananlar: winners.map(w => {
+                            if (typeof w === 'string') {
+                                return { name: w, gender: '', prizeType: null };
+                            }
+                            return w;
+                        })
+                    })
+                })
+                .then(res => res.json())
+                .then(data => console.log('✓ Çekiliş sonucu Firebase\'ye kaydedildi:', data))
+                .catch(err => console.error('⚠️ Firebase kaydetme hatası:', err));
+            }
         }
 
         // Kazananı seç
@@ -178,8 +203,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const draw = drawOptions[selectedDrawKey];
-            const winners = chooseWinners();
-            if (!winners.length) {
+            
+            // Yeterli katılımcı kontrolü
+            const remaining = getRemainingNames();
+            if (remaining.length < draw.count) {
+                showError(`Yeterli katılımcı yok. Kalan ${remaining.length} katılımcı var.`);
+                return;
+            }
+
+            if (isDrawCompleted(selectedDrawKey)) {
+                showError(`${draw.label} çekilişi zaten tamamlandı.`);
                 return;
             }
 
@@ -187,6 +220,31 @@ document.addEventListener('DOMContentLoaded', () => {
             selectBtn.innerHTML = '<span class="btn-text">Seçiliyor...</span><span class="btn-emoji spinning">🎲</span>';
 
             try {
+                // Backend'den kazananları çek (Plantso ve Miracle için cinsiyet/ödül türü bilgisi dahil)
+                const response = await fetch('/winners-select', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        draw: selectedDrawKey,
+                        count: draw.count,
+                        alreadySelected: state.allWinners // Daha önce seçilmiş olanlar
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Kazanan seçim hatası');
+                }
+
+                const data = await response.json();
+                const winners = data.winners.map(w => ({
+                    name: w.name,
+                    gender: w.gender,
+                    prizeType: w.prizeType
+                }));
+
                 await animateWinnerSelection();
                 saveDrawResults(draw, winners);
                 hideError();
@@ -195,6 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             } catch (err) {
                 showError('Hata: ' + err.message);
+                console.error('Kazanan seçim hatası:', err);
             } finally {
                 selectBtn.disabled = isDrawCompleted(selectedDrawKey);
                 selectBtn.innerHTML = `<span class="btn-text">${draw.label} için Kazananları Seç</span><span class="btn-emoji">🎲</span>`;

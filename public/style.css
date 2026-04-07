@@ -12,18 +12,17 @@ body {
     background-size: cover;
     background-attachment: fixed;
     background-color: #000;
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     padding: 0;
-    padding-bottom: 90px; /* Sponsorlar için boşluk */
+    padding-bottom: 65px; /* Sponsorlar için boşluk */
     position: relative;
-    overflow-x: hidden;
+    overflow: hidden;
     color: #000000;
-    font-size: 16px;
-    overflow-y: auto; /* Enabling vertical scroll */
+    font-size: 14px;
 }
 
 /* Dağ Background */
@@ -168,7 +167,7 @@ body::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px 0;
+    padding: 8px 0;
 }
 
 .event-tagline {
@@ -176,11 +175,11 @@ body::after {
 }
 
 .card {
-    width: min(760px, calc(100% - 40px));
+    width: min(760px, calc(100% - 20px));
     background: rgba(255, 255, 255, 0.14);
-    border-radius: 30px;
+    border-radius: 20px;
     box-shadow: 0 32px 90px rgba(0, 0, 0, 0.33);
-    padding: 36px 34px 38px;
+    padding: 20px 20px 22px;
     animation: slideIn 0.5s ease-out;
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.18);
@@ -198,64 +197,64 @@ body::after {
 }
 
 h1 {
-    font-size: 2.4em;
+    font-size: 2.2em;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
     color: #000000;
     font-weight: 700;
 }
 
 h2 {
-    font-size: 1.6em;
-    margin-bottom: 15px;
+    font-size: 1.4em;
+    margin-bottom: 10px;
     color: #000000;
     font-weight: 700;
 }
 
 .section {
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .draw-tabs {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 6px;
     justify-content: center;
 }
 
 .draw-btn {
-    flex: 1 1 calc(50% - 10px);
-    min-width: 150px;
-    padding: 14px 12px;
+    flex: 1 1 calc(50% - 6px);
+    min-width: 120px;
+    padding: 11px 9px;
     border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 16px;
+    border-radius: 12px;
     background: rgba(255, 255, 255, 0.12);
     color: #000000;
     font-weight: 700;
-    font-size: 1.1em;
+    font-size: 0.95em;
     text-align: center;
     cursor: pointer;
     transition: all 0.25s ease;
-    line-height: 1.3;
+    line-height: 1.25;
 }
 
 .draw-btn span {
     display: block;
-    margin-top: 6px;
-    font-size: 1em;
+    margin-top: 3px;
+    font-size: 0.8em;
     color: #000000;
     font-weight: 400;
 }
 
 .draw-logo {
     display: block;
-    width: 50px;
-    height: 50px;
+    width: 35px;
+    height: 35px;
     object-fit: contain;
-    margin: 0 auto 8px;
-    border-radius: 8px;
+    margin: 0 auto 4px;
+    border-radius: 6px;
     background: rgba(255, 255, 255, 0.2);
-    padding: 4px;
+    padding: 2px;
 }
 
 .draw-btn.active,
@@ -285,17 +284,18 @@ h2 {
 
 .results-page {
     width: 100%;
-    min-height: 100vh;
+    height: calc(100vh - 65px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 8px;
+    overflow-y: auto;
 }
 
 .results-card {
-    width: min(95vw, calc(100% - 20px));
+    width: min(95vw, calc(100% - 16px));
     height: auto; /* Adjust height to fit content */
-    max-height: 90vh; /* Ensure it doesn't exceed the viewport */
+    max-height: calc(100vh - 85px); /* Ensure it doesn't exceed the viewport */
     margin: 0 auto;
     background: rgba(255, 255, 255, 0.14);
     border-radius: 30px;
@@ -825,8 +825,9 @@ h2 {
     background: rgba(255, 255, 255, 0.12);
     box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.12);
     backdrop-filter: blur(12px);
-    padding: 8px 10px;
+    padding: 4px 6px;
     border-top: 1px solid rgba(255, 255, 255, 0.16);
+    height: 65px;
 }
 
 /* Başlığı gizle */
@@ -839,9 +840,9 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0 100px;  /* Sol-sağ logolar için boşluk */
-    gap: 8px;
-    overflow-x: auto; /* Yatay kaydırma */
+    padding: 0 70px;  /* Sol-sağ logolar için boşluk */
+    gap: 4px;
+    overflow-x: hidden; /* No scroll */
     position: relative;
     z-index: 1;
 }
@@ -849,15 +850,15 @@ h2 {
 /* Sol ve sağ logolar */
 .own-logo {
     position: absolute;
-    height: 88px;
+    height: 60px;
     top: 50%;
     transform: translateY(-50%);
     z-index: 2; /* Ortadakilerin üstünde */
 
     /* Sponsor kartı görünümü */
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 16px;
-    padding: 10px;
+    border-radius: 10px;
+    padding: 6px;
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     border: 1px solid rgba(0, 0, 0, 0.08);
@@ -865,7 +866,7 @@ h2 {
     display: block;
     object-fit: contain;
     width: auto;
-    max-width: 120px;
+    max-width: 80px;
 }
 
 .own-logo:hover {
@@ -884,15 +885,15 @@ h2 {
 
 /* Sponsor kartları */
 .sponsor-item {
-    flex: 0 0 80px;
-    max-width: 80px;
-    min-height: 60px;
+    flex: 0 0 50px;
+    max-width: 50px;
+    min-height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 12px;
-    padding: 6px;
+    border-radius: 8px;
+    padding: 3px;
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
     border: 1px solid rgba(0, 0, 0, 0.05);
