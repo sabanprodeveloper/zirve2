@@ -7,10 +7,78 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .email-container {
-            max-width: 500px;
-            margin: 50px auto;
+            max-width: 800px;
+            margin: 30px auto;
             width: 100%;
-            padding: 0 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .email-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .flag-image {
+            display: none;
+        }
+
+        .people-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.14);
+            border-radius: 30px;
+            box-shadow: 0 32px 90px rgba(0, 0, 0, 0.33);
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            flex: 1;
+            min-width: 0;
+        }
+
+        .people-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .person-card {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .person-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .person-card img:hover {
+            transform: scale(1.05);
+        }
+
+        .person-card h3 {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
         }
 
         .email-card {
@@ -23,6 +91,7 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
             animation: slideIn 0.5s ease-out;
             width: 100%;
+            flex: 1;
         }
 
         .email-logo {
@@ -224,7 +293,34 @@
         @media (max-width: 768px) {
             .email-container {
                 margin: 30px auto;
-                padding: 0 15px;
+                padding: 15px;
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+
+            .email-wrapper {
+                gap: 15px;
+                flex-basis: 100%;
+            }
+
+            .people-section {
+                padding: 20px;
+                flex-basis: 100%;
+            }
+
+            .people-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+                max-width: 100%;
+            }
+
+            .person-card img {
+                width: 80px;
+                height: 80px;
+            }
+
+            .person-card h3 {
+                font-size: 10px;
             }
 
             .email-card {
@@ -297,81 +393,110 @@
 
         @media (max-width: 480px) {
             .email-container {
-                margin: 20px auto;
-                padding: 0 10px;
+                margin: 5px auto !important;
+                padding: 5px !important;
+                gap: 5px !important;
+                flex-direction: column !important;
+            }
+
+            .email-wrapper {
+                flex: none !important;
+                width: 100% !important;
             }
 
             .email-card {
-                padding: 20px 15px;
+                flex: none !important;
+                width: 100% !important;
+                padding: 15px !important;
+            }
+
+            .people-section {
+                flex: none !important;
+                width: 100% !important;
+                padding: 15px !important;
+                position: relative;
+                padding-bottom: 90px !important;
+            }
+
+            .people-section::after {
+                content: '';
+                position: absolute;
+                bottom: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 70px;
+                height: 70px;
+                background-image: url('logo.jpg');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+                z-index: 10;
                 border-radius: 15px;
             }
 
-            .email-card h1 {
-                font-size: 20px;
-                margin-bottom: 6px;
+            .people-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                position: relative;
+                z-index: 1;
             }
 
-            .email-card .subtitle {
-                font-size: 12px;
-                margin-bottom: 20px;
+            .person-card img {
+                width: 60px !important;
+                height: 60px !important;
+            }
+
+            .person-card h3 {
+                font-size: 9px !important;
+            }
+
+            .own-logo.left {
+                display: none !important;
+            }
+
+            .own-logo.right {
+                display: none;
             }
 
             .email-logo {
-                width: 60px;
-                height: 60px;
-                font-size: 32px;
-                margin-bottom: 12px;
+                width: 50px !important;
+                height: 50px !important;
+                margin-bottom: 10px !important;
+            }
+
+            .email-card h1 {
+                font-size: 18px !important;
+                margin-bottom: 5px !important;
+            }
+
+            .email-card .subtitle {
+                font-size: 12px !important;
+                margin-bottom: 15px !important;
             }
 
             .email-form-group {
-                margin-bottom: 12px;
+                margin-bottom: 10px !important;
             }
 
             .email-form-group label {
-                font-size: 12px;
-                margin-bottom: 5px;
+                font-size: 11px !important;
+                margin-bottom: 4px !important;
             }
 
             .email-form-group input {
-                padding: 9px 10px;
-                font-size: 16px;
-                border-radius: 6px;
+                padding: 8px 10px !important;
+                font-size: 14px !important;
             }
 
             .email-btn-check {
-                padding: 10px;
-                font-size: 14px;
-                margin-top: 6px;
-                border-radius: 6px;
+                padding: 10px !important;
+                font-size: 13px !important;
             }
 
             .email-result {
-                margin-top: 15px;
-                padding: 12px;
-                font-size: 13px;
-                border-radius: 6px;
-            }
-
-            .email-emoji {
-                font-size: 22px;
-                margin-bottom: 6px;
-            }
-
-            .home-link {
-                margin-top: 12px;
-            }
-
-            .home-link a {
-                font-size: 12px;
-                padding: 6px 10px;
-                border-radius: 5px;
-            }
-
-            .admin-button {
-                padding: 8px 14px;
-                font-size: 11px;
-                top: 15px;
-                left: 15px;
+                margin-top: 10px !important;
+                padding: 10px !important;
+                font-size: 12px !important;
             }
         }
 
@@ -453,7 +578,9 @@
 
     <!-- Email Kontrol Sayfası -->
     <div class="email-container">
-        <div class="email-card card">
+        <img src="egz.jpeg" alt="EGZ-26 Bayrağı" class="flag-image left">
+        <div class="email-wrapper">
+            <div class="email-card card">
             <div class="email-logo">✉️</div>
             <h1>EGZ-26 Giriş Kontrolü</h1>
             <p class="subtitle">Email adresinizi giriş yapıp görevliye bildirin.</p>
@@ -474,6 +601,36 @@
             </form>
 
             <div id="result" class="email-result"></div>
+            </div>
+        </div>
+        <div class="people-section">
+            <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #333;">👥 Katılımcılar</h2>
+            <div class="people-grid">
+                <div class="person-card">
+                    <img src="kisiler/atilla.jfif" alt="Atilla">
+                    <h3>Atilla ERYILMAZ</h3>
+                </div>
+                <div class="person-card">
+                    <img src="kisiler/esref.jfif" alt="Eşref">
+                    <h3>Eşref HAMAMCIOĞLU</h3>
+                </div>
+                <div class="person-card">
+                    <img src="kisiler/ozlem.jfif" alt="Özlem">
+                    <h3>Özlem MEKİK</h3>
+                </div>
+                <div class="person-card">
+                    <img src="kisiler/sumeyye.jfif" alt="Sümeyye">
+                    <h3>Sümeyye ARZAKÇI</h3>
+                </div>
+                <div class="person-card">
+                    <img src="kisiler/bartubaran.jfif" alt="Bartuğ Baran">
+                    <h3>Bartuğ BARAN</h3>
+                </div>
+                <div class="person-card">
+                    <img src="kisiler/muhammet.jpg" alt="Muhammet">
+                    <h3>Muhammet Ali KARABAŞ</h3>
+                </div>
+            </div>
         </div>
     </div>
 

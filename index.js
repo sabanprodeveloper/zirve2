@@ -10,19 +10,54 @@ const app = express();
 app.use(express.json());
 
 // Firebase Admin SDK Initialize
-const firebaseCredentialsPath = path.join(__dirname, "egz-26-firebase-adminsdk-fbsvc-bb56f66258.json");
-if (fs.existsSync(firebaseCredentialsPath)) {
+let firebaseConfig = null;
+
+// Railway: Environment variable'dan oku
+if (process.env.FIREBASE_CREDENTIALS) {
   try {
-    const firebaseConfig = require(firebaseCredentialsPath);
+    let credString = process.env.FIREBASE_CREDENTIALS;
+    console.log("📌 FIREBASE_CREDENTIALS bulundu, uzunluk:", credString.length);
+    
+    // Eğer base64 ise decode et
+    if (!credString.includes('{')) {
+      console.log("🔄 Base64 decode ediliyor...");
+      credString = Buffer.from(credString, 'base64').toString('utf8');
+      console.log("✓ Base64 decode başarılı");
+    }
+    
+    firebaseConfig = JSON.parse(credString);
+    console.log("✓ Firebase credentials environment variable'dan yüklendi");
+  } catch (err) {
+    console.error("❌ Firebase env variable parse hatası:", err.message);
+  }
+} 
+// Local: dosyasından oku
+else {
+  const firebaseCredentialsPath = path.join(__dirname, "egz-26-firebase-adminsdk-fbsvc-bb56f66258.json");
+  if (fs.existsSync(firebaseCredentialsPath)) {
+    try {
+      firebaseConfig = require(firebaseCredentialsPath);
+      console.log("✓ Firebase credentials dosyasından yüklendi (local)");
+    } catch (err) {
+      console.error("❌ Firebase dosya parse hatası:", err.message);
+    }
+  } else {
+    console.warn("⚠️  Firebase credentials bulunamadı (ne env var ne dosya)");
+  }
+}
+
+// Firebase initialize et
+if (firebaseConfig) {
+  try {
     admin.initializeApp({
       credential: admin.credential.cert(firebaseConfig)
     });
     console.log("✓ Firebase Admin SDK initialized");
   } catch (err) {
-    console.warn("⚠️  Firebase initialization hatası:", err.message);
+    console.error("❌ Firebase initialization hatası:", err.message);
   }
 } else {
-  console.warn("⚠️  Firebase credentials dosyası bulunamadı");
+  console.warn("⚠️  Firebase credentials yüklenmedi - Firebase devre dışı");
 }
 
 // Root path'i check-email.html'ye yönlendir (İlk açılan sayfa) - STATIC'TEN ÖNCE!
