@@ -60,9 +60,9 @@ if (firebaseConfig) {
   console.warn("⚠️  Firebase credentials yüklenmedi - Firebase devre dışı");
 }
 
-// Root path'i check-email.html'ye yönlendir (İlk açılan sayfa) - STATIC'TEN ÖNCE!
+// Update the default route to redirect to /admin-login.html
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/check-email.html'));
+  res.sendFile(path.join(__dirname, 'public/admin-login.html'));
 });
 
 // Static dosyaları serve et
