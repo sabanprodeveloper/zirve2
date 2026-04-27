@@ -219,46 +219,31 @@ function shuffleArray(items) {
   return copy;
 }
 
-function selectRandom(participants, count, { allowReuse = false } = {}) {
+function selectRandom(participants, count) {
   if (!Array.isArray(participants) || participants.length === 0 || count <= 0) return [];
-
-  // Tekrara izin yoksa klasik seçim
-  if (!allowReuse) {
-    return shuffleArray(participants).slice(0, count);
-  }
-
-  // Tekrara izin varsa önce herkesi bir kez dağıt, yetmezse döngüyle tamamla
-  const shuffled = shuffleArray(participants);
-  const selected = [];
-  for (let i = 0; i < count; i++) {
-    selected.push(shuffled[i % shuffled.length]);
-  }
-  return selected;
+  return shuffleArray(participants).slice(0, count);
 }
 
 // Cinsiyete göre rastgele seçim (kadın/erkek dengesi öncelikli)
-function selectByGender(participants, count, { allowReuse = false } = {}) {
+function selectByGender(participants, count) {
   try {
     const male = participants.filter(p => p.gender.toLowerCase() === 'erkek');
     const female = participants.filter(p => p.gender.toLowerCase() === 'kadın');
     
-    console.log(`Erkek: ${male.length}, Kadın: ${female.length}, İstenen: ${count}, Tekrar İzni: ${allowReuse}`);
+    console.log(`Erkek: ${male.length}, Kadın: ${female.length}, İstenen: ${count}`);
     
     const perGender = Math.floor(count / 2);
     let selected = [
-      ...selectRandom(male, perGender, { allowReuse }),
-      ...selectRandom(female, perGender, { allowReuse })
+      ...selectRandom(male, perGender),
+      ...selectRandom(female, perGender)
     ];
 
     // count tek sayı veya bir cinsiyet eksikse kalan slotları doldur
     const remaining = count - selected.length;
     if (remaining > 0) {
-      let fillPool = participants;
-      if (!allowReuse) {
-        const selectedNames = new Set(selected.map(p => p.name));
-        fillPool = participants.filter(p => !selectedNames.has(p.name));
-      }
-      selected = [...selected, ...selectRandom(fillPool, remaining, { allowReuse })];
+      const selectedNames = new Set(selected.map(p => p.name));
+      const fillPool = participants.filter(p => !selectedNames.has(p.name));
+      selected = [...selected, ...selectRandom(fillPool, remaining)];
     }
 
     selected = shuffleArray(selected).slice(0, count);
@@ -408,17 +393,17 @@ app.post("/winners-select", async (req, res) => {
     // Çekiliş türüne göre seçim yap
     if (draw === 'miracle') {
       // Miracle: 8 kadın, 8 erkek
-      selected = selectByGender(participantsForDraw, count, { allowReuse: allowRepeatBecauseInsufficient });
+      selected = selectByGender(participantsForDraw, count);
     } else if (draw === 'plantso') {
       // Plantso: 5 bedava, 5 %30 indirim
-      const temp = selectByGender(participantsForDraw, count, { allowReuse: allowRepeatBecauseInsufficient });
+      const temp = selectByGender(participantsForDraw, count);
       selected = assignPrizes(temp, 5);
     } else {
       // Diğer çekilişler: normal rastgele seçim
-      selected = selectRandom(participantsForDraw, count, { allowReuse: allowRepeatBecauseInsufficient });
+      selected = selectRandom(participantsForDraw, count);
     }
 
-    if (selected.length < count) {
+    if (selected.length < count && !allowRepeatBecauseInsufficient) {
       return res.status(400).json({ 
         error: `Çekiliş için yeterli katılımcı bulunamadı. Bulunan: ${selected.length}, İstenen: ${count}` 
       });
