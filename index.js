@@ -210,37 +210,58 @@ function getParticipants(data) {
   }
 }
 
-// Cinsiyete göre rastgele seçim (Kadın ve Erkek eşit sayıda)
-function selectByGender(participants, count, callback) {
+function shuffleArray(items) {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function selectRandom(participants, count, { allowReuse = false } = {}) {
+  if (!Array.isArray(participants) || participants.length === 0 || count <= 0) return [];
+
+  // Tekrara izin yoksa klasik seçim
+  if (!allowReuse) {
+    return shuffleArray(participants).slice(0, count);
+  }
+
+  // Tekrara izin varsa önce herkesi bir kez dağıt, yetmezse döngüyle tamamla
+  const shuffled = shuffleArray(participants);
+  const selected = [];
+  for (let i = 0; i < count; i++) {
+    selected.push(shuffled[i % shuffled.length]);
+  }
+  return selected;
+}
+
+// Cinsiyete göre rastgele seçim (kadın/erkek dengesi öncelikli)
+function selectByGender(participants, count, { allowReuse = false } = {}) {
   try {
     const male = participants.filter(p => p.gender.toLowerCase() === 'erkek');
     const female = participants.filter(p => p.gender.toLowerCase() === 'kadın');
     
-    console.log(`Erkek: ${male.length}, Kadın: ${female.length}, İstenen: ${count}`);
+    console.log(`Erkek: ${male.length}, Kadın: ${female.length}, İstenen: ${count}, Tekrar İzni: ${allowReuse}`);
     
     const perGender = Math.floor(count / 2);
-    const selected = [];
-    
-    // Erkekleri seç
-    for (let i = 0; i < perGender && male.length > 0; i++) {
-      const randomIndex = Math.floor(Math.random() * male.length);
-      selected.push(male[randomIndex]);
-      male.splice(randomIndex, 1);
+    let selected = [
+      ...selectRandom(male, perGender, { allowReuse }),
+      ...selectRandom(female, perGender, { allowReuse })
+    ];
+
+    // count tek sayı veya bir cinsiyet eksikse kalan slotları doldur
+    const remaining = count - selected.length;
+    if (remaining > 0) {
+      let fillPool = participants;
+      if (!allowReuse) {
+        const selectedNames = new Set(selected.map(p => p.name));
+        fillPool = participants.filter(p => !selectedNames.has(p.name));
+      }
+      selected = [...selected, ...selectRandom(fillPool, remaining, { allowReuse })];
     }
-    
-    // Kadınları seç
-    for (let i = 0; i < perGender && female.length > 0; i++) {
-      const randomIndex = Math.floor(Math.random() * female.length);
-      selected.push(female[randomIndex]);
-      female.splice(randomIndex, 1);
-    }
-    
-    // Karıştır
-    for (let i = selected.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [selected[i], selected[j]] = [selected[j], selected[i]];
-    }
-    
+
+    selected = shuffleArray(selected).slice(0, count);
     return selected;
   } catch (err) {
     console.error("selectByGender Hatası:", err);
@@ -367,39 +388,39 @@ app.post("/winners-select", async (req, res) => {
     }
 
     const data = await getFormData();
-    let participants = getParticipants(data);
+    const allParticipants = getParticipants(data);
     
     // Daha önce seçilmiş olanları filtrele
     const alreadySelectedNames = new Set(alreadySelected.map(w => 
       typeof w === 'string' ? w : w.name
     ));
-    participants = participants.filter(p => !alreadySelectedNames.has(p.name));
+    const remainingParticipants = allParticipants.filter(p => !alreadySelectedNames.has(p.name));
+    const allowRepeatBecauseInsufficient = remainingParticipants.length < count;
+    const participantsForDraw = allowRepeatBecauseInsufficient ? allParticipants : remainingParticipants;
     
-    console.log(`Toplam katılımcı: ${getParticipants(data).length}, Seçilmiş: ${alreadySelected.length}, Kalan: ${participants.length}`);
+    console.log(
+      `Toplam katılımcı: ${allParticipants.length}, Seçilmiş: ${alreadySelected.length}, ` +
+      `Kalan benzersiz: ${remainingParticipants.length}, Tekrar İzni: ${allowRepeatBecauseInsufficient}`
+    );
 
     let selected = [];
 
     // Çekiliş türüne göre seçim yap
     if (draw === 'miracle') {
       // Miracle: 8 kadın, 8 erkek
-      selected = selectByGender(participants, count);
+      selected = selectByGender(participantsForDraw, count, { allowReuse: allowRepeatBecauseInsufficient });
     } else if (draw === 'plantso') {
       // Plantso: 5 bedava, 5 %30 indirim
-      const temp = selectByGender(participants, count);
+      const temp = selectByGender(participantsForDraw, count, { allowReuse: allowRepeatBecauseInsufficient });
       selected = assignPrizes(temp, 5);
     } else {
       // Diğer çekilişler: normal rastgele seçim
-      const copy = [...participants];
-      for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [copy[i], copy[j]] = [copy[j], copy[i]];
-      }
-      selected = copy.slice(0, count);
+      selected = selectRandom(participantsForDraw, count, { allowReuse: allowRepeatBecauseInsufficient });
     }
 
     if (selected.length < count) {
       return res.status(400).json({ 
-        error: `Yeterli katılımcı yok. Bulunan: ${selected.length}, İstenen: ${count}` 
+        error: `Çekiliş için yeterli katılımcı bulunamadı. Bulunan: ${selected.length}, İstenen: ${count}` 
       });
     }
 

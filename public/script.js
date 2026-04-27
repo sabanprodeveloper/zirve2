@@ -234,13 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const draw = drawOptions[selectedDrawKey];
             
-            // Yeterli katılımcı kontrolü
-            const remaining = getRemainingNames();
-            if (remaining.length < draw.count) {
-                showError(`Yeterli katılımcı yok. Kalan ${remaining.length} katılımcı var.`);
-                return;
-            }
-
             if (isDrawCompleted(selectedDrawKey)) {
                 showError(`${draw.label} çekilişi zaten tamamlandı.`);
                 return;
